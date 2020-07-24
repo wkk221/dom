@@ -17,7 +17,7 @@ import axios from 'axios'
 axios.defaults.baseURL = 'http://127.0.0.1:8888/api/private/v1/' // 配置基本的请求路径
 Vue.prototype.$http = axios // 挂载到Vue对象
 Vue.config.productionTip = false
-
+window.store = store
 new Vue({
   router,
   store,

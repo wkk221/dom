@@ -5,7 +5,8 @@ import {
   FormItem,
   Input,
 
-  Message
+  Message,
+  MessageBox
 } from 'element-ui'
 
 // 组件式调用
@@ -16,3 +17,4 @@ Vue.use(Input)
 
 // API 方式调用
 Vue.prototype.$message = Message
+Vue.prototype.$messageBox = MessageBox
