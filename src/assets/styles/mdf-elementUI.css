@@ -1,0 +1,24 @@
+.resetBorder{
+  border-right: 0px !important;
+}
+.iconSize {
+  font-size: 20px !important;
+}
+.iconSpace {
+  padding-left: 10px;
+}
+
+.cardTop{
+  margin-top: 15px;
+}
+
+/* 栅格部分色彩 */
+.bg-hd {
+  background: green;
+}
+.bg-aside {
+  background: rgb(50, 55, 68);
+}
+.bg-main {
+  background: #ffffff;
+}

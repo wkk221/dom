@@ -5,6 +5,29 @@ import {
   FormItem,
   Input,
 
+  Row,
+  Col,
+  Container,
+  Header,
+  Aside,
+  Main,
+
+  Menu,
+  Submenu,
+  MenuItem,
+  MenuItemGroup,
+
+  BreadcrumbItem,
+  Breadcrumb,
+  Card,
+
+  Table,
+  TableColumn,
+  Pagination,
+  Switch,
+  Tooltip,
+  Dialog,
+
   Message,
   MessageBox
 } from 'element-ui'
@@ -14,6 +37,33 @@ Vue.use(Button)
 Vue.use(Form)
 Vue.use(FormItem)
 Vue.use(Input)
+
+// 布局组件
+Vue.use(Container)
+Vue.use(Header)
+Vue.use(Aside)
+Vue.use(Main)
+Vue.use(Row)
+Vue.use(Col)
+
+// 表格组件
+Vue.use(Table)
+Vue.use(TableColumn)
+
+// 面包屑
+Vue.use(Breadcrumb)
+Vue.use(BreadcrumbItem)
+Vue.use(Card)
+Vue.use(Pagination)
+Vue.use(Switch)
+Vue.use(Tooltip)
+
+// 列表导航布局
+Vue.use(Menu)
+Vue.use(Submenu)
+Vue.use(MenuItem)
+Vue.use(MenuItemGroup)
+Vue.use(Dialog)
 
 // API 方式调用
 Vue.prototype.$message = Message

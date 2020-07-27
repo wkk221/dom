@@ -1,0 +1,61 @@
+* [33mcommit a8ec70f3d9c99d798e1e134c3cc3b6c36b8e77cb[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/login[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mlogin[m[33m)[m
+[31m|[m Author: wkk221 <wkk221@tutanota.com>
+[31m|[m Date:   Sat Jul 25 05:55:14 2020 +0800
+[31m|[m 
+[31m|[m     登录功能和退出登录路由守卫的逻辑
+[31m|[m 
+* [33mcommit 0c514bb9bda3790373cd2463b47c078688d46e4b[m
+[31m|[m Author: wkk221 <wkk221@tutanota.com>
+[31m|[m Date:   Fri Jul 24 09:38:46 2020 +0800
+[31m|[m 
+[31m|[m     登录逻辑的实现,学习路由守卫
+[31m|[m 
+* [33mcommit fb4ee586657ff3b245fef97dfa490d8bf243b993[m
+[31m|[m Author: wkk221 <wkk221@tutanota.com>
+[31m|[m Date:   Thu Jul 23 08:59:50 2020 +0800
+[31m|[m 
+[31m|[m     尝试使用vue来做管理系统,vuex组件内部注册elementU,样式失效
+[31m|[m 
+* [33mcommit f0093383559312d16f71fea54d6e811eeb44ba9f[m
+[31m|[m Author: wkk221 <wkk221@tutanota.com>
+[31m|[m Date:   Thu Jul 23 07:43:24 2020 +0800
+[31m|[m 
+[31m|[m     整理一个干净的目录
+[31m|[m 
+* [33mcommit 468737770022d64c3ff2151d05b04a22013848f2[m
+[31m|[m Author: wkk221 <wkk221@tutanota.com>
+[31m|[m Date:   Thu Jul 23 07:28:50 2020 +0800
+[31m|[m 
+[31m|[m     初始化项目,正在和远程仓库对接
+[31m|[m 
+* [33mcommit 15e83e9734fd0ea6780ab05e4ff4d0c03f8dfd98[m
+[31m|[m Author: wkk221 <wkk221@tutanota.com>
+[31m|[m Date:   Thu Jul 23 07:01:05 2020 +0800
+[31m|[m 
+[31m|[m     测试
+[31m|[m 
+* [33mcommit 6909beaca0b5b38595e159c31ee6e5057f8fac3b[m
+[31m|[m Author: wkk221 <wkk221@tutanota.com>
+[31m|[m Date:   Thu Jul 23 06:56:53 2020 +0800
+[31m|[m 
+[31m|[m     第一次修改login
+[31m|[m 
+* [33mcommit d95ed9c6447c2b72bcdb15c9773b7ea63fc288be[m
+[31m|[m Author: yo ti <git_yoti@tutanota.com>
+[31m|[m Date:   Thu Jul 23 05:46:25 2020 +0800
+[31m|[m 
+[31m|[m     '提交上传'
+[31m|[m 
+* [33mcommit d3489ca3f9d4c17d1aa6a0e6d411f02bbe12e36a[m
+[31m|[m Author: wkk221 <64971514+wkk221@users.noreply.github.com>
+[31m|[m Date:   Thu Jul 23 05:44:33 2020 +0800
+[31m|[m 
+[31m|[m     创建说明文件
+[31m|[m     
+[31m|[m     说明文件
+[31m|[m 
+* [33mcommit 64eca73440f99223ad4212a9aa9dfceb4f976303[m
+  Author: wkk221 <64971514+wkk221@users.noreply.github.com>
+  Date:   Thu Jul 23 05:41:07 2020 +0800
+  
+      Initial commit

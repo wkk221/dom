@@ -4,6 +4,10 @@ import Login from '../pages/login/login.vue'
 import Home from '../pages/home/home.vue'
 import _404 from '../pages/404/404.vue'
 
+// 二级路由
+import Welcome from '../pages/home/welcome.vue'
+import Users from '../pages/home/users/users.vue'
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -19,7 +23,12 @@ const routes = [
   {
     path: '/home',
     component: Home,
-    name: 'home'
+    name: 'home',
+    redirect: '/welcome',
+    children: [
+      { path: '/welcome', component: Welcome },
+      { path: '/users', component: Users }
+    ]
   },
   {
     path: '*',
