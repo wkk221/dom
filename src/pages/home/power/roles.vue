@@ -49,7 +49,7 @@
           <template v-slot="scope">
             <el-button type="primary" size="mini" icon="el-icon-edit" @click="editRoleById(scope.row.id)">编辑</el-button>
             <el-button type="danger" size="mini" icon="el-icon-delete" @click="deleteRoleById(scope.row.id)">删除</el-button>
-            <el-button type="warning" size="mini" icon="el-icon-setting" @click="editPowersTree(scope)">分配权限</el-button>
+            <el-button type="warning" size="mini" icon="el-icon-setting" @click="editRolePower(scope)">分配权限</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -100,22 +100,20 @@
     <!-- dialog:分配权限  -->
     <el-dialog
       ref="gg2"
-      v-if="showPowerTree"
       title="分配权限"
       :visible.sync="showPowerTree"
-      close-on-click-modal
-      close-on-press-escape
       width="60%"
       @close="handlsetPowersClose">
       <el-tree
-        ref="tree"
-        :data="powerTree"
-        show-checkbox
-        node-key="id"
-        default-expand-all
-        :default-checked-keys="powersChecked"
-        :props="powerMap">
-      </el-tree>
+      :data="powerTree"
+      :props="defaultProps"
+      node-key="id"
+      @node-click="handleNodeClick"
+      :default-checked-keys="powersChecked"
+      :default-expanded-keys="powersChecked"
+      ref="tree"
+      show-checkbox
+      ></el-tree>
       <!-- :default-expanded-keys="powersChecked" -->
       <span slot="footer" class="dialog-footer">
         <el-button @click="showPowerTree = false">取 消</el-button>
@@ -131,10 +129,12 @@ export default {
       roles: [],
       powerTree: [],
       powersChecked: [], // 选中状态的id列表
+      defaultProps: { label: 'authName', children: 'children' },
       showcreatRole: false,
       showeditRole: false,
       showPowerTree: false,
-      powerMap: { children: 'children', label: 'id' },
+      rid: 0,
+      powerMap: { children: 'children', label: 'authName' },
       // 创建角色
       creatRoleForm: {
         roleName: '',
@@ -274,57 +274,108 @@ export default {
         this.$message.info('取消删除')
       })
     },
-    // 分配权限
-    editPowersTree (scope) {
-      this.getPowersTree().then(() => {
-        this.powersChecked = this.getChecked(scope.row.children, this.powersChecked)
-        console.log(this.$refs)
-        this.showPowerTree = true
-      })
-      // 提取第三级id
-      /*
-        this.$refs.treeRef.getCheckedKeys()
-      */
-    },
-    // 加载权限树
-    async getPowersTree () {
-      const { data: res } = await this.$http.get('rights/tree')
-      // 请求失败
-      console.log(res)
-      if (res.meta.status !== 200) {
-        return this.message({
-          type: 'error',
-          message: res.meta.msg
-        })
-      }
-      this.powerTree = res.data
-    },
-    // 保存权限
-    savePowers () {
-      console.log('保存权限')
-      this.showPowerTree = false
-    },
-    // 权限树关闭,重置选中状态
-    handlsetPowersClose() {
-      console.log('重置选中状态')
+
+    handlsetPowersClose () {
       this.powersChecked = []
     },
-    // 递归提取id
-    getChecked (cld, arr) {
-      // 列表
-      if (cld) {
-        cld.forEach(e => {
-          if (e.children) {
-            // 有子项则继续递归
-            this.getChecked(e.children, arr)
-          } else {
-            // 没有子项 = 3级菜单, 推入数组。
-            arr.push(e.id)
-          }
-        })
+    handleNodeClick () {
+      console.log('选择事件', this.$refs.tree.getCheckedKeys())
+    },
+    // 保存权限修改
+    async savePowers () {
+      // this.showPowerTree = false
+      console.log('保存修改', this.$refs.tree.getCheckedKeys())
+      const { data: res } = await this.$http.post(`roles/${this.rid}/rights`, {
+        rids: this.$refs.tree.getCheckedKeys().join(',')
+      })
+      console.log(res)
+      if (res.meta.status !== 200) {
+        return this.$message.error('分配权限失败')
       }
+      this.$message.success('分配成功')
+      this.getRoles()
+      this.showPowerTree = false
+    },
+    // 编辑用权限
+    async editRolePower (scope) {
+      // 展开dialog
+      this.showPowerTree = true
+      this.rid = scope.row.id
+      console.log('rid', '-->', this.rid)
+      // 请求树形结构的数据
+      const { data: res } = await this.$http.get('rights/tree')
+      console.log('请求权限树形结构', res, this.$refs.tree)
+      // 请求到了以为数据
+      if (res.meta.status !== 200) {
+        return this.$message.error('权限树请求失败:' + res.meta.msg)
+      }
+      this.powerTree = res.data
+      this.getLevel3(scope.row.children, this.powersChecked)
+      console.log(this.powersChecked)
+    },
+    getLevel3 (cld, arr) {
+      cld.forEach(e => {
+        if (e.children) {
+          // 有子项则继续递归
+          this.getLevel3(e.children, arr)
+        } else {
+          // 没有子项 = 3级菜单, 推入数组。
+          arr.push(e.id)
+        }
+      })
       return arr
     }
+    // // 分配权限
+    // editPowersTree (scope) {
+    //   this.getPowersTree().then(() => {
+    //     this.powersChecked = this.getChecked(scope.row.children, this.powersChecked)
+    //     console.log(this.$refs)
+    //     this.showPowerTree = true
+    //   })
+    //   // 提取第三级id
+    //   /*
+    //     this.$refs.treeRef.getCheckedKeys()
+    //   */
+    // },
+    // // 加载权限树
+    // async getPowersTree () {
+    //   const { data: res } = await this.$http.get('rights/tree')
+    //   // 请求失败
+    //   console.log(res)
+    //   if (res.meta.status !== 200) {
+    //     return this.message({
+    //       type: 'error',
+    //       message: res.meta.msg
+    //     })
+    //   }
+    //   this.powerTree = res.data
+    // },
+    // // 保存权限
+    // savePowers () {
+    //   console.log('保存权限')
+    //   this.showPowerTree = false
+    // },
+    // // 权限树关闭,重置选中状态
+    // handlsetPowersClose() {
+    //   console.log('重置选中状态')
+    //   this.powersChecked = []
+    // },
+    // // 递归提取id
+    // getChecked (cld, arr) {
+    //   // 列表
+    //   if (cld) {
+    //     cld.forEach(e => {
+    //       if (e.children) {
+    //         // 有子项则继续递归
+    //         this.getChecked(e.children, arr)
+    //       } else {
+    //         // 没有子项 = 3级菜单, 推入数组。
+    //         arr.push(e.id)
+    //       }
+    //     })
+    //   }
+    //   return arr
+    // }
   },
   computed: {
   },
