@@ -22,3 +22,18 @@
 .bg-main {
   background: #ffffff;
 }
+
+.e-tag--6px{
+  margin: 6px;
+}
+.bottomBorder {
+  border-bottom: solid 1px #d1d1d1;
+}
+.topBorder {
+  border-top: solid 1px #d1d1d1;
+}
+
+.flex--vc {
+  display: flex;
+  align-items: center;
+}

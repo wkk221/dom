@@ -27,6 +27,8 @@ import {
   Switch,
   Tooltip,
   Dialog,
+  Tag,
+  Tree,
 
   Message,
   MessageBox
@@ -37,6 +39,7 @@ Vue.use(Button)
 Vue.use(Form)
 Vue.use(FormItem)
 Vue.use(Input)
+Vue.use(Tag)
 
 // 布局组件
 Vue.use(Container)
@@ -57,6 +60,7 @@ Vue.use(Card)
 Vue.use(Pagination)
 Vue.use(Switch)
 Vue.use(Tooltip)
+Vue.use(Tree)
 
 // 列表导航布局
 Vue.use(Menu)

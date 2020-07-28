@@ -7,6 +7,8 @@ import _404 from '../pages/404/404.vue'
 // 二级路由
 import Welcome from '../pages/home/welcome.vue'
 import Users from '../pages/home/users/users.vue'
+import Rights from '../pages/home/power/rights.vue'
+import Roles from '../pages/home/power/roles.vue'
 
 Vue.use(VueRouter)
 
@@ -27,7 +29,9 @@ const routes = [
     redirect: '/welcome',
     children: [
       { path: '/welcome', component: Welcome },
-      { path: '/users', component: Users }
+      { path: '/users', component: Users },
+      { path: '/roles', component: Roles }, // 角色
+      { path: '/rights', component: Rights } // 权限
     ]
   },
   {
