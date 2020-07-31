@@ -100,7 +100,6 @@
     <!-- dialog:分配权限  -->
     <el-dialog
       ref="gg2"
-      v-if="showPowerTree"
       title="分配权限"
       :visible.sync="showPowerTree"
       close-on-click-modal
@@ -302,12 +301,16 @@ export default {
     // 保存权限
     savePowers () {
       console.log('保存权限')
-      this.showPowerTree = false
+      // this.showPowerTree = false
+      this.$refs.tree.setCheckedKeys([]) // 重置为未选中状态。
+
+      // eca14f8c870 setCheckedKeys
     },
     // 权限树关闭,重置选中状态
     handlsetPowersClose() {
       console.log('重置选中状态')
-      this.powersChecked = []
+      // this.powersChecked = []
+      this.$refs.tree.setCheckedKeys([])
     },
     // 递归提取id
     getChecked (cld, arr) {

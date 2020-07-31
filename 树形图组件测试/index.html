@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <!-- 引入样式 -->
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+  <!-- 引入组件库 -->
+  <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+  <title>Document</title>
+</head>
+
+<body>
+  <div class="ui-box">
+    <el-dialog title="分配权限" :visible.sync="dialogFormVisible" ref="dialog" :default-expand-all="true">
+      <!-- 过滤器 -->
+      <el-input
+        placeholder="输入关键字进行过滤"
+        v-model="filterText">
+      </el-input>
+      <!-- 树形组件 -->
+      <el-tree 
+        :data="tree" 
+        :props="keyMap"
+        node-key="id"
+        :default-checked-keys="checked"
+
+        show-checkbox
+        
+
+        empty-text="gggggggg"
+        :highlight-current="false"
+        
+        :auto-expand-parent="false"
+        
+        :accordion="true"
+        :indent="20"
+        
+        draggable
+        ref="tree"
+        :filter-node-method="filterTree"
+        lazy
+        :load="loadNode"
+
+         ></el-tree>
+      <!-- 页脚 default-expand-all icon-class="el-icon-loading"-->
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+        <el-button @click="testFn">测试</el-button>
+      </div>
+    </el-dialog>
+    <el-button @click="open([11,12,141])">编辑[11,12,141]</el-button>
+    <el-button @click="open([223, 21])">编辑[223, 21]</el-button>
+    <el-button @click="open([])">编辑[]</el-button>
+    <pre>{{ tree}}</pre>
+    <!-- lazy
+        :load="loadNode" -->
+  </div>
+  
+</body>
+
+</html>
+<script>
+  const vm = new Vue({
+    el: '.ui-box',
+    data: {
+      dialogFormVisible: false,
+      tree: [],
+      checked: [],
+      keyMap: {
+        children: 'children',
+        label: 'title'
+      },
+      filterText: ''
+    },
+    methods: {
+      open(arr) {
+        this.showRef()
+        this.dialogFormVisible = true
+        // 模拟请求数据 
+        // this.getTree()
+        // 模拟选中状态的列表
+        this.checked = arr
+      },
+      filterTree (val, node) {
+        // console.log(val, node.id, '===>过滤后的数据?')
+        if (!val) { return true }
+        return node.title.indexOf(val) !== -1
+      },
+      showRef() {
+        const { tree, dialog } = this.$refs
+        console.log('树形组件', tree, '弹窗组件', dialog)
+        if (tree) {
+          console.log('选中:',tree.getCheckedNodes())
+
+        }
+      },
+      getTree() {
+        const tree = [{
+          id: 1,
+          title: 'aaa',
+          children: [
+            {
+              id: 11,
+              title: 'aaa11'
+            },
+            {
+              id: 12,
+              title: 'aaa12'
+            }, {
+              id: 13,
+              title: 'aaa13'
+            }, {
+              id: 14,
+              title: 'aaa14',
+              children: [
+                {
+                  id: 141,
+                  title: 'aaa141'
+                }
+              ]
+            }
+          ]
+        }, {
+          id: 2,
+          title: 'bbb',
+          children: [
+            {
+              id: 21,
+              title: 'bbb21'
+            },
+            {
+              id: 22,
+              title: 'bbb22',
+              children: [
+                {
+                  id: 221,
+                  title: 'bbb221'
+                },
+                {
+                  id: 222,
+                  title: 'bbb222'
+                },
+                {
+                  id: 223,
+                  title: 'bbb223'
+                },
+              ]
+            }
+          ]
+        }]
+        
+        // 问题出在这里。 ==> 数据重新请求才会触发绑定?
+        // this.tree = this.tree.length ? this.tree :tree
+        // console.log(!!this.tree)
+        // console.log(this.tree ,!!this.tree)
+        this.tree = tree
+      }
+      ,
+      testFn () {
+        const { tree, dialog } = this.$refs
+        if (tree) {
+          // console.log('将某个id设置为选择状态:',tree.setChecked(223))
+          // console.log('获得选中的键值', tree.getCurrentKey())
+          // console.log('获得选中的节点', tree.getCurrentNode())
+          
+      
+          console.log('--->A' ,this.tree)
+          
+
+          // console.log('半选状态数据节点',tree.getHalfCheckedNodes())
+          // console.log('帮选状态数据id',tree.getHalfCheckedKeys())
+
+          console.log('选中的数据:',tree.getCheckedNodes())
+          console.log('选中的ID:',tree.getCheckedKeys())
+
+          tree.getCheckedNodes().forEach(e => {
+            e.disabled = true
+          })
+        }
+      }
+      ,
+      loadNode(node, resolve) {
+        
+        // 一级树逻辑
+        if(node.level === 0) {
+          console.log(node, '一级树')
+          resolve(node.data)
+        } 
+        // 2,3级树逻辑
+        if (node.level > 0) {
+          clearInterval(this.timer) 
+          this.timer = setInterval(() => {
+            resolve(node.data.children && node.data.children.length ? node.data.children : [])
+          },500)
+        } else {
+          resolve([])
+        }
+        console.log('-->是否会向下进行')
+      }
+    },
+    watch: {
+      checked (val) {
+        // console.log('发生变化', val)
+        this.getTree()
+      },
+      filterText (val) {
+        console.log('表达数据发生更改')
+        this.$refs.tree.filter(val)
+      }
+    },
+    created () {
+      // this.getTree()
+    },
+    mounted () {
+      // this.getTree()
+    }
+  })
+</script>
