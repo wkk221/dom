@@ -29,6 +29,8 @@ import {
   Dialog,
   Tag,
   Tree,
+  Select,
+  Option,
 
   Message,
   MessageBox
@@ -61,6 +63,8 @@ Vue.use(Pagination)
 Vue.use(Switch)
 Vue.use(Tooltip)
 Vue.use(Tree)
+Vue.use(Select)
+Vue.use(Option)
 
 // 列表导航布局
 Vue.use(Menu)

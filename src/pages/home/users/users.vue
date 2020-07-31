@@ -36,7 +36,7 @@
             <el-button type="primary" size="min" icon="el-icon-edit" @click="editUser(scope.row.id)" ></el-button>
             <el-button type="danger" size="min" icon="el-icon-delete" @click="deleteUser(scope.row.id)"></el-button>
             <el-tooltip class="item" effect="dark" content="设置权限" placement="top" :enterable="false">
-              <el-button type="warning" size="min" icon="el-icon-setting"></el-button>
+              <el-button type="warning" size="min" icon="el-icon-setting" @click="allocationRole(scope.row)"></el-button>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -93,6 +93,26 @@
         <el-button type="primary" @click="saveUser">确 定</el-button>
       </div>
     </el-dialog>
+    <!-- 分配角色 -->
+    <el-dialog title="分配角色" :visible.sync="dialogVisibleEAllocationRole">
+      <p>当前用户: {{currentUser.username}}</p>
+      <p>当前角色: {{currentUser.role_name}}</p>
+      <!-- 下拉菜单 -->
+      <p>分配角色: <el-select v-model="roleValue" placeholder="请选择">
+          <el-option
+            v-for="role in roles"
+            :key="role.id"
+            :label="role.roleName"
+            :value="role.id">
+          </el-option>
+        </el-select>
+        {{roleValue}}
+      </p>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleEAllocationRole = false">取 消</el-button>
+        <el-button type="primary" @click="saveAllocationRole">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -117,6 +137,9 @@ export default {
       total: 0,
       dialogFormVisible: false,
       dialogFormVisibleEdit: false,
+      dialogVisibleEAllocationRole: false, // 分配角色
+      roles: [], // 角色列表
+      roleValue: '',
       creatUserFrom: {
         username: '522203003',
         password: '123456',
@@ -311,6 +334,34 @@ export default {
         this.reqUsers()
         this.dialogFormVisibleEdit = false
       })
+    },
+    // 分配角色
+    async allocationRole (userInfo) {
+      this.dialogVisibleEAllocationRole = true
+      this.currentUser = userInfo
+      this.getRoles()
+    },
+    // 取得角色列表
+    async getRoles () {
+      const { data: res } = await this.$http.get('roles')
+      if (res.meta.status !== 200) {
+        return this.$message.error('角色列表获取失败')
+      }
+      this.roles = res.data
+    },
+    // 保存角色
+    async saveAllocationRole () {
+      if(!this.roleValue) { return this.$message.error('还未选择分配的角色') }
+      const { data: res } = await this.$http.put(`users/${this.currentUser.id}/role`, {
+        rid: this.roleValue
+      })
+      if (res.meta.status !== 200) {
+        return this.$message.error('分配角色失败:')
+      }
+      this.reqUsers()
+      this.$message.success('角色分配成功')
+      this.dialogVisibleEAllocationRole = false
+      this.roleValue = ''
     }
   },
   created () {
