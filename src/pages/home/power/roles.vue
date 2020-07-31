@@ -53,7 +53,6 @@
           </template>
         </el-table-column>
       </el-table>
-      {{powersChecked}}
     </el-card>
     <!-- dialog:添加 -->
     <el-dialog
@@ -102,15 +101,18 @@
       ref="gg2"
       title="分配权限"
       :visible.sync="showPowerTree"
-      width="60%"
+      width="40%"
       @close="handlsetPowersClose">
-      <el-tree
+      <el-input v-model="filterText" placeholder="请输入内容"></el-input>
+      <el-tree class="cardTop"
       :data="powerTree"
       :props="defaultProps"
+      accordion
       node-key="id"
       @node-click="handleNodeClick"
       :default-checked-keys="powersChecked"
-      :default-expanded-keys="powersChecked"
+      :default-expanded-keys="[101]"
+      :filter-node-method="filterNode"
       ref="tree"
       show-checkbox
       ></el-tree>
@@ -120,6 +122,9 @@
         <el-button type="primary" @click="savePowers">确 定</el-button>
       </span>
     </el-dialog>
+    <!-- <pre>
+      {{powerTree}}
+    </pre> -->
   </div>
 </template>
 <script>
@@ -129,13 +134,14 @@ export default {
       roles: [],
       powerTree: [],
       powersChecked: [], // 选中状态的id列表
-      defaultProps: { label: 'authName', children: 'children' },
       showcreatRole: false,
       showeditRole: false,
       showPowerTree: false,
+      filterText: '', // 过滤文本
       rid: 0,
-      powerMap: { children: 'children', label: 'authName' },
-      // 创建角色
+      defaultProps: { label: 'authName', children: 'children' },
+      powerMap: { children: 'children', label: 'id' },
+      // 创建角色 authName
       creatRoleForm: {
         roleName: '',
         roleDesc: ''
@@ -277,18 +283,17 @@ export default {
 
     handlsetPowersClose () {
       this.powersChecked = []
+      this.resetDialog()
     },
     handleNodeClick () {
-      console.log('选择事件', this.$refs.tree.getCheckedKeys())
+      // console.log('选择事件', this.$refs.tree.getCheckedKeys())
     },
     // 保存权限修改
     async savePowers () {
-      // this.showPowerTree = false
-      console.log('保存修改', this.$refs.tree.getCheckedKeys())
+      const { tree } = this.$refs
       const { data: res } = await this.$http.post(`roles/${this.rid}/rights`, {
-        rids: this.$refs.tree.getCheckedKeys().join(',')
+        rids: [...tree.getCheckedKeys(), ...tree.getHalfCheckedKeys()].join(',')
       })
-      console.log(res)
       if (res.meta.status !== 200) {
         return this.$message.error('分配权限失败')
       }
@@ -324,60 +329,24 @@ export default {
         }
       })
       return arr
+    },
+    // 过滤函数
+    filterNode (val, node) {
+      if(!val) return true
+      return node.authName.indexOf(val) !== -1
+    },
+    // 重置结果.
+    resetDialog () {
+      this.filterText = ''
+      this.powerTree = []
     }
-    // // 分配权限
-    // editPowersTree (scope) {
-    //   this.getPowersTree().then(() => {
-    //     this.powersChecked = this.getChecked(scope.row.children, this.powersChecked)
-    //     console.log(this.$refs)
-    //     this.showPowerTree = true
-    //   })
-    //   // 提取第三级id
-    //   /*
-    //     this.$refs.treeRef.getCheckedKeys()
-    //   */
-    // },
-    // // 加载权限树
-    // async getPowersTree () {
-    //   const { data: res } = await this.$http.get('rights/tree')
-    //   // 请求失败
-    //   console.log(res)
-    //   if (res.meta.status !== 200) {
-    //     return this.message({
-    //       type: 'error',
-    //       message: res.meta.msg
-    //     })
-    //   }
-    //   this.powerTree = res.data
-    // },
-    // // 保存权限
-    // savePowers () {
-    //   console.log('保存权限')
-    //   this.showPowerTree = false
-    // },
-    // // 权限树关闭,重置选中状态
-    // handlsetPowersClose() {
-    //   console.log('重置选中状态')
-    //   this.powersChecked = []
-    // },
-    // // 递归提取id
-    // getChecked (cld, arr) {
-    //   // 列表
-    //   if (cld) {
-    //     cld.forEach(e => {
-    //       if (e.children) {
-    //         // 有子项则继续递归
-    //         this.getChecked(e.children, arr)
-    //       } else {
-    //         // 没有子项 = 3级菜单, 推入数组。
-    //         arr.push(e.id)
-    //       }
-    //     })
-    //   }
-    //   return arr
-    // }
   },
   computed: {
+  },
+  watch: {
+    filterText(val) {
+      this.$refs.tree.filter(val)
+    }
   },
   created () {
     this.getRoles()
