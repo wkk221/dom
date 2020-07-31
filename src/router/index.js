@@ -10,6 +10,10 @@ import Users from '../pages/home/users/users.vue'
 import Rights from '../pages/home/power/rights.vue'
 import Roles from '../pages/home/power/roles.vue'
 
+import Category from '../pages/home/produces/category.vue'
+import Params from '../pages/home/produces/params.vue'
+import Good from '../pages/home/produces/good.vue'
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -31,7 +35,10 @@ const routes = [
       { path: '/welcome', component: Welcome },
       { path: '/users', component: Users },
       { path: '/roles', component: Roles }, // 角色
-      { path: '/rights', component: Rights } // 权限
+      { path: '/rights', component: Rights }, // 权限
+      { path: '/categories', component: Category }, // 商品分类
+      { path: '/params', component: Params }, // 分类参数
+      { path: '/goods', component: Good } // 商品列表
     ]
   },
   {
