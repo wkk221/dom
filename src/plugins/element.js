@@ -31,6 +31,7 @@ import {
   Tree,
   Select,
   Option,
+  Cascader,
 
   Message,
   MessageBox
@@ -72,6 +73,7 @@ Vue.use(Submenu)
 Vue.use(MenuItem)
 Vue.use(MenuItemGroup)
 Vue.use(Dialog)
+Vue.use(Cascader) // 级联组件
 
 // API 方式调用
 Vue.prototype.$message = Message

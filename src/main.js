@@ -9,11 +9,9 @@ import './plugins/element.js' // element UI组件的注册都在这个文件里�
 import './assets/styles/font/iconfont.css' // 自定义图标
 import axios from 'axios'
 import './mock/mock' // 导入mock 模拟一些数据
-// import {
-//   Message
-// } from 'element-ui'
-// Vue.prototype.$message = Message
-// Vue.use(Message)
+import ZkTable from 'vue-table-with-tree-grid'
+
+Vue.component(ZkTable.name, ZkTable)
 
 axios.defaults.baseURL = 'http://127.0.0.1:8888/api/private/v1/' // 配置基本的请求路径
 // axios.defaults.baseURL = 'http://127.0.0.1:8888/' // 配置基本的请求路径

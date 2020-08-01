@@ -11,6 +11,9 @@
 .cardTop{
   margin-top: 15px;
 }
+.wfull {
+  width: 100%;
+}
 
 /* 栅格部分色彩 */
 .bg-hd {
