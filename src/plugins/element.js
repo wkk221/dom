@@ -32,7 +32,9 @@ import {
   Select,
   Option,
   Cascader,
-
+  Alert,
+  Tabs,
+  TabPane,
   Message,
   MessageBox
 } from 'element-ui'
@@ -43,6 +45,8 @@ Vue.use(Form)
 Vue.use(FormItem)
 Vue.use(Input)
 Vue.use(Tag)
+Vue.use(Tabs)
+Vue.use(TabPane)
 
 // 布局组件
 Vue.use(Container)
@@ -74,6 +78,7 @@ Vue.use(MenuItem)
 Vue.use(MenuItemGroup)
 Vue.use(Dialog)
 Vue.use(Cascader) // 级联组件
+Vue.use(Alert)
 
 // API 方式调用
 Vue.prototype.$message = Message

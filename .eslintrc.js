@@ -16,6 +16,9 @@ module.exports = {
     'space-before-function-paren': 0,
     'keyword-spacing': 0,
     'space-in-parens': 0,
-    'no-multiple-empty-lines':0
+    'no-multiple-empty-lines':0,
+    'camelcase':0,
+    'no-unused-vars':0,
+    'no-trailing-spaces':0
   }
 }

@@ -151,7 +151,7 @@ export default {
     // 删除分类
     deleteCategory({ cat_id: cid }) {
       this.$messageBox.confirm('确认删除分类?', '删除分类').then(async () => {
-        console.log('确认修改', cid)
+        // console.log('确认修改', cid)
         const { data: res } = await this.$http.delete(`categories/${cid}`)
         if (res.meta.status !== 200) {
           return this.$message.error('分类删除失败:' + res.meta.msg )
@@ -217,7 +217,6 @@ export default {
         this.$message.error('查询错误:' + res.meta.msg)
       }
       this.currentCategory = res.data
-      console.log(cid, '--->cid', res)
     },
     // 提交编辑后的分类
     saveEditCategoryForm () {
@@ -225,7 +224,6 @@ export default {
       this.$refs.editForm.validate(async va => {
         if(!va) { this.$message.error('验证未通过') }
         const { cat_id: cid, cat_name: cname } = this.currentCategory
-        console.log(cid, cname)
         const { data: res } = await this.$http.put(`categories/${cid}`, {
           cat_name: cname
         })
