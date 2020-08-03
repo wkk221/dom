@@ -23,11 +23,57 @@
         </el-col>
       </el-row>
       <!-- 选项卡 -->
-      <el-tabs class="cardTop" v-model="sel" @tab-click="handleTabClick">
+      <el-tabs class="cardTop" v-model="addAttributeForm.attr_sel" @tab-click="getParams">
+        <!-- 动态区 -->
         <el-tab-pane label="动态属性" name="many">
           <el-row>
             <el-col>
-              <el-button type="primary" :disabled="isDisabled"  @click="addAttribute">添加参数</el-button>
+              <el-button type="primary" :disabled="isDisabled"  @click="show('showAddAttributeForm')">添加参数</el-button>
+            </el-col>
+          </el-row>
+          <!-- 表格部分 -->
+          <el-table class="cardTop" :data="attributes" border>
+            <el-table-column type="expand">
+              <template v-slot="scope">
+                <!-- 循环展示 -->
+                <el-tag
+                  @close="removeAttributeValue(scope.row, index)"
+                  class="e-tag--6px"
+                  v-for="(item, index) in scope.row.attr_vals"
+                  :key="index"
+                  closable
+                  type="success">
+                  {{item}}
+                </el-tag>
+                <!-- 值的输入 -->
+                <el-input
+                  class="input-new-tag w120"
+                  v-if="scope.row.inputVisible"
+                  v-model="scope.row.inputValue"
+                  ref="saveTagInput"
+                  size="small"
+                  @keyup.enter.native="handleInputConfirm(scope.row)"
+                  @blur="handleInputConfirm(scope.row)"
+                >
+                </el-input>
+                <el-button v-else class="button-new-tag" size="small" @click="showInput(scope.row)">+ New Tag</el-button>
+              </template>
+            </el-table-column>
+            <el-table-column label="#" type="index"></el-table-column>
+            <el-table-column prop="attr_name" label="参数名称"></el-table-column>
+            <el-table-column label="操作">
+              <template v-slot="scope">
+                <el-button type="primary" size="mini" icon="el-icon-edit" @click="editAttribute(scope.row)">编辑</el-button>
+                <el-button type="danger" size="mini" icon="el-icon-delete" @click="deleteAttribute(scope.row)">删除</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-tab-pane>
+        <!-- 静态区 -->
+        <el-tab-pane label="静态属性" name="only">
+          <el-row>
+            <el-col>
+              <el-button type="primary" :disabled="isDisabled" @click="show('showAddAttributeForm')">添加属性</el-button>
             </el-col>
           </el-row>
           <!-- 表格部分 -->
@@ -47,45 +93,15 @@
                 <!-- 值的输入 -->
                 <el-input
                   class="input-new-tag w120"
-                  v-if="inputVisible"
-                  v-model="inputValue"
+                  v-if="scope.row.inputVisible"
+                  v-model="scope.row.inputValue"
                   ref="saveTagInput"
                   size="small"
                   @keyup.enter.native="handleInputConfirm(scope.row)"
                   @blur="handleInputConfirm(scope.row)"
                 >
                 </el-input>
-                <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
-              </template>
-            </el-table-column>
-            <el-table-column label="#" type="index"></el-table-column>
-            <el-table-column prop="attr_name" label="参数名称"></el-table-column>
-            <el-table-column label="操作">
-              <template v-slot="scope">
-                <el-button type="primary" size="mini" icon="el-icon-edit" @click="editAttribute(scope.row)">编辑</el-button>
-                <el-button type="danger" size="mini" icon="el-icon-delete" @click="deleteAttribute(scope.row)">删除</el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-tab-pane>
-        <el-tab-pane label="静态属性" name="only">
-          <el-row>
-            <el-col>
-              <el-button type="primary" :disabled="isDisabled" @click="addAttribute">添加属性</el-button>
-            </el-col>
-          </el-row>
-          <!-- 表格部分 -->
-          <el-table class="cardTop" :data="attributes" border>
-            <el-table-column type="expand">
-              <template v-slot="scope">
-                <el-tag
-                  class="e-tag--6px"
-                  v-for="(item, index) in scope.row.attr_vals"
-                  :key="index"
-                  closable
-                  type="success">
-                  {{item}}
-                </el-tag>
+                <el-button v-else class="button-new-tag" size="small" @click="showInput(scope.row)">+ New Tag</el-button>
               </template>
             </el-table-column>
             <el-table-column label="#" type="index"></el-table-column>
@@ -100,7 +116,7 @@
         </el-tab-pane>
       </el-tabs>
       <!-- dialog#编辑属性 -->
-      <el-dialog :title="'编辑'+ AttributeTypeText" :visible.sync="showEditAttributeForm" @close="editDialogClose">
+      <el-dialog :title="'编辑'+ AttributeTypeText" :visible.sync="showEditAttributeForm"  @close="dialogCloseEvent('editForm')">
         <el-form ref="editForm" :model="currentAttribute" label-width="80px"  :rules="rules">
           <el-form-item :label="AttributeTypeText" prop="attr_name">
             <el-input v-model="currentAttribute.attr_name"></el-input>
@@ -112,10 +128,10 @@
         </div>
       </el-dialog>
       <!-- dialog#添加属性 -->
-      <el-dialog :title="'添加' + AttributeTypeText" :visible.sync="showAddAttributeForm" @close="attributeFormDialogClose">
-        <el-form ref="addForm" :model="attribute" label-width="80px" :rules="rules">
-          <el-form-item :label="AttributeTypeText" prop="name">
-            <el-input v-model="attribute.name"></el-input>
+      <el-dialog :title="'添加' + AttributeTypeText" :visible.sync="showAddAttributeForm" @close="dialogCloseEvent('addForm')">
+        <el-form ref="addForm" :model="addAttributeForm" label-width="80px" :rules="rules">
+          <el-form-item :label="AttributeTypeText" prop="attr_name">
+            <el-input v-model="addAttributeForm.attr_name"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -130,25 +146,22 @@
 export default {
   data () {
     return {
-      categories: [],
-      selecetKey: [],
-      attributes: [],
-      cid: 0,
-      sel: 'many',
-      currentAttribute: {
-        attr_name: ''
-      },
-      attribute: {
-        name: ''
-      },
+      categories: [], // 三联组件数据
+      selecetKey: [], // 选中后的数据
+      attributes: [], // 根据分类id请求到的属性列表
+      // cid: 0,
+      // sel: 'many',
+      currentAttribute: {}, // 查询到的属性#用于保存查询到的属性
+      addAttributeForm: {
+        attr_name: '',
+        attr_sel: 'many',
+        cat_id: 0
+      }, // 管理一些通用数据
       showEditAttributeForm: false,
       showAddAttributeForm: false,
       inputVisible: false,
       inputValue: '',
       rules: {
-        name: [{
-          required: true, message: '属性名称不得为空', tigger: 'blur'
-        }],
         attr_name: [{
           required: true, message: '属性名称不得为空', tigger: 'blur'
         }]
@@ -158,21 +171,15 @@ export default {
   methods: {
     // 级联发生切换
     handleChange () {
-      // console.log(this.selecetKey)
       if (this.selecetKey.length < 3) {
-        // console.log('点击清除按钮')
         this.attributes = []
         this.selecetKey = []
-        this.cid = -1
-        return true
+        this.addAttributeForm.cat_id = -1
+        return
       }
-      this.cid = this.selecetKey[2]
+      this.addAttributeForm.cat_id = this.selecetKey[2]
+      // console.log(this.addAttributeForm, '三联')
       this.getParams()
-    },
-    // 选修卡切换
-    handleTabClick() {
-      this.getParams()
-      console.log(this.sel, '?!')
     },
     // 请求分类信息
     async getCategories() {
@@ -185,32 +192,33 @@ export default {
     // 请求属性
     async getParams() {
       this.attributes = []
-      const { cid, sel } = this
+      const { attr_sel, cat_id } = this.addAttributeForm
       if (this.selecetKey.length < 3) {
         this.attributes = []
         return
       }
-
-      const { data: res } = await this.$http.get(`categories/${cid}/attributes`, {
-        params: { sel }
+      console.log('刷新数据')
+      const { data: res } = await this.$http.get(`categories/${cat_id}/attributes`, {
+        params: { sel: attr_sel }
       })
-      console.log(res)
+
       if (res.meta.status !== 200) {
         return this.$message.error('请求失败:' + res.meta.msg)
       }
       // 每次请求属性后都要对属性进行切割
       res.data.forEach((d) => {
         d.attr_vals = !d.attr_vals ? [] : d.attr_vals.split(' ')
+        d.inputVisible = false
+        d.inputValue = ''
       })
 
       this.attributes = res.data
     },
     // 删除属性
-    deleteAttribute ({ attr_id: aid }) {
-      const { cid } = this
+    deleteAttribute (row) {
+      const { attr_id, attr_name, cat_id } = row
       this.$messageBox.confirm(`确定删除${this.AttributeTypeText}属性?`, '删除属性').then(async () => {
-        // console.log('确认删除')
-        const { data: res } = await this.$http.delete(`categories/${cid}/attributes/${aid}`)
+        const { data: res } = await this.$http.delete(`categories/${cat_id}/attributes/${attr_id}`)
         if (res.meta.status !== 200) {
           return this.$message.error('删除失败:' + res.meta.msg)
         }
@@ -220,101 +228,130 @@ export default {
     },
     // 编辑属性
     async editAttribute(row) {
-      this.showEditAttributeForm = true
-      // 重置为空
+      this.show('showEditAttributeForm')
       const { attr_id, attr_name, cat_id } = row
-      // this.currentAttribute = {}
-      // const { cid } = this
       const { data: res } = await this.$http.get(`categories/${cat_id}/attributes/${attr_id}`)
       if (res.meta.status !== 200) {
         this.$message.error('获取信息失败:' + res.meta.msg)
       }
-      // 接受数据 #这部分没有必要#有必要! 编辑的时候需要请求数据? ==> attr_name这个属性就够了
       this.currentAttribute = res.data
+      console.log('-->请求信息保存到本地', this.currentAttribute)
     },
     // 保存编辑
     saveEditAttribute () {
       this.$refs.editForm.validate(async (va) => {
         if(!va) { return this.$message.error('属性名称不得为空,') }
-        const { sel } = this
-        const { cat_id: cid, attr_id: aid, attr_name: aname } = this.currentAttribute
-        const { data: res } = await this.$http.put(`categories/${cid}/attributes/${aid}`, {
-          attr_name: aname,
-          attr_sel: sel
+        const { cat_id, attr_id, attr_name, attr_sel } = this.currentAttribute
+        const { data: res } = await this.$http.put(`categories/${cat_id}/attributes/${attr_id}`, {
+          attr_name,
+          attr_sel
         })
         if (res.meta.status !== 200) {
           return this.$message.error('编辑失败:' + res.meta.msg)
         }
         this.$message.success('属性修改成功')
         this.getParams()
-        this.showEditAttributeForm = false
+        this.hide('showEditAttributeForm')
       })
     },
-    // 关闭属性编辑
-    editDialogClose() {
-      this.$refs.editForm.resetFields()
-    },
-    // 增加属性# 有点多余
-    addAttribute () {
-      this.showAddAttributeForm = true
-    },
+    
     // 提交添加
     saveAddAttribute () {
       this.$refs.addForm.validate(async va => {
-        // console.log('验证结果', va)
         if (!va) {
           return this.$message.error('表格验证未通过,请检查输入')
         }
-        // 属性名称
-        const { cid } = this
-        const { data: res } = await this.$http.post(`categories/${cid}/attributes`, {
-          attr_name: this.attribute.name,
-          attr_sel: this.sel
+        const { cat_id, attr_name, attr_sel } = this.addAttributeForm
+        const { data: res } = await this.$http.post(`categories/${cat_id}/attributes`, {
+          attr_name,
+          attr_sel
         })
         if (res.meta.status !== 201) {
           return this.$message.error('添加属性失败:' + res.meta.msg)
         }
         this.$message.success('添加属性成功')
-        this.showAddAttributeForm = false
-        this.attribute.name = ''
+        this.hide('showAddAttributeForm')
         this.getParams()
       })
     },
-    // dialog 关闭
-    attributeFormDialogClose () {
-      this.$refs.addForm.resetFields()
-    },
+    
 
-
-
-
+    /*
+      添加属性值的行为。
+    */
     // 删除属性值
-    removeAttributeValue (row) {
-      console.log('删除值')
+    removeAttributeValue (row, index) {
+      console.log('删除值索引:', index)
+
+      row.attr_vals.splice(index, 1) // 删除源数据
       this.updataAttributeValue(row)
+
+      /*
+        删除后数组坍塌怎么办?
+      */
     },
     // 显示表单
-    showInput() {
-      this.inputVisible = true
+    showInput(row) {
+      console.log('执行showinput', row)
+      row.inputVisible = true
+      // this.$refs.saveTagInput.focus()
+      console.log('AAA', this.$refs.saveTagInput)
+      this.$nextTick(e => {
+        console.log('BBB', this.$refs.saveTagInput)
+        this.$refs.saveTagInput.$refs.input.focus()
+      })
+      /*
+        ===> 要获得输入框的焦点。
+        刚刚想在这里做什么来着?
+      */
     },
     // 保存数据
     handleInputConfirm(row) {
-      // 数据的请求应该在这里完成
-      this.inputVisible = false
-      this.inputValue = '' // 清空
-      console.log('添加新的值')
+      // 推入数组
+      if (row.inputValue.trim()) {
+        row.attr_vals.push(row.inputValue.trim())
+      }
+      // 重置数据#数据添加到数组成功之后
+      row.inputVisible = false
+      row.inputValue = '' // 清空
+      console.log('添加新的值,', row)
       this.updataAttributeValue(row)
     },
-    // 更新数据 每次发生数据增加删除 都需要出现提交一下请求。
+    // 核心提交原有的数据
     async updataAttributeValue(row) {
       const { attr_id, attr_name, attr_sel, cat_id, attr_vals } = row
       const { data: res } = await this.$http.put(`categories/${cat_id}/attributes/${attr_id}`, {
         attr_name,
         attr_sel,
-        attr_vals: 'abc 123 456'
+        attr_vals: attr_vals.join(' ')
       })
-      this.getParams()
+      if (res.meta.status !== 200) {
+        return this.$message.error('添加失败:' + res.meta.msg)
+      }
+      this.$message.success('添加成功')
+
+      // this.getParams() // 刷新有问题。 不需要从新请求数据。
       console.log('--->添加值成功了吗?', res)
+    },
+
+
+
+
+    /*
+      优化后通用的代码。
+    */ 
+    show(t) {
+      console.log('执行show行为:' + t)
+      this[t] = true
+    },
+    hide(t) {
+      console.log('执行hide行为:' + t)
+      this[t] = false
+    },
+    // 模态框关闭事件优化#整合,以参数形式来控制#清空表单行为
+    dialogCloseEvent(ref) {
+      console.log('关闭的模态框是:' + ref)
+      this.$refs[ref].resetFields()
     }
   },
   computed: {
@@ -322,7 +359,7 @@ export default {
       return this.selecetKey.length < 3
     },
     AttributeTypeText () {
-      return this.sel === 'many' ? '动态属性' : '静态属性'
+      return this.addAttributeForm.attr_sel === 'many' ? '动态属性' : '静态属性'
     }
   },
   created () {
