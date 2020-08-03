@@ -10,8 +10,10 @@ import './assets/styles/font/iconfont.css' // 自定义图标
 import axios from 'axios'
 import './mock/mock' // 导入mock 模拟一些数据
 import ZkTable from 'vue-table-with-tree-grid'
+import Draggable from 'vuedraggable' // 拖拽排序插件
 
 Vue.component(ZkTable.name, ZkTable)
+Vue.component('draggable', Draggable)
 
 axios.defaults.baseURL = 'http://127.0.0.1:8888/api/private/v1/' // 配置基本的请求路径
 // axios.defaults.baseURL = 'http://127.0.0.1:8888/' // 配置基本的请求路径

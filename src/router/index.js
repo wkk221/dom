@@ -13,6 +13,7 @@ import Roles from '../pages/home/power/roles.vue'
 import Category from '../pages/home/produces/category.vue'
 import Params from '../pages/home/produces/params.vue'
 import Good from '../pages/home/produces/good.vue'
+import simple from '../pages/home/test/simple.vue'
 
 Vue.use(VueRouter)
 
@@ -38,7 +39,8 @@ const routes = [
       { path: '/rights', component: Rights }, // 权限
       { path: '/categories', component: Category }, // 商品分类
       { path: '/params', component: Params }, // 分类参数
-      { path: '/goods', component: Good } // 商品列表
+      { path: '/goods', component: Good }, // 商品列表
+      { path: '/test', component: simple } // 插件测试
     ]
   },
   {

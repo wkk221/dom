@@ -36,15 +36,29 @@
             <el-table-column type="expand">
               <template v-slot="scope">
                 <!-- 循环展示 -->
-                <el-tag
-                  @close="removeAttributeValue(scope.row, index)"
-                  class="e-tag--6px"
-                  v-for="(item, index) in scope.row.attr_vals"
-                  :key="index"
-                  closable
-                  type="success">
-                  {{item}}
-                </el-tag>
+                <!-- 拖拽组件? -->
+                <draggable
+                  :list="scope.row.attr_vals"
+                  :disabled="!enabled"
+                  ghost-class="ghost"
+                  @start="dragging = true"
+                  @end="dragging = false"
+                  @sort="MoveEnd(scope.row)"
+                >
+                  <transition-group>
+                    <el-tag
+                      @close="removeAttributeValue(scope.row, index)"
+                      class="e-tag--6px"
+                      v-for="(item, index) in scope.row.attr_vals"
+                      :key="index"
+                      closable
+                      type="success">
+                      {{item}}
+                    </el-tag>
+                  </transition-group>
+                </draggable>
+                {{scope.row.attr_vals}}
+                
                 <!-- 值的输入 -->
                 <el-input
                   class="input-new-tag w120"
@@ -81,15 +95,29 @@
             <el-table-column type="expand">
               <template v-slot="scope">
                 <!-- 循环展示 -->
-                <el-tag
-                  @close="removeAttributeValue(scope.row)"
-                  class="e-tag--6px"
-                  v-for="(item, index) in scope.row.attr_vals"
-                  :key="index"
-                  closable
-                  type="success">
-                  {{item}}
-                </el-tag>
+                <!-- 拖拽组件? -->
+                <draggable
+                  :list="scope.row.attr_vals"
+                  :disabled="!enabled"
+                  ghost-class="ghost"
+                  @start="dragging = true"
+                  @end="dragging = false"
+                  @sort="MoveEnd(scope.row)"
+                >
+                  <transition-group>
+                    <el-tag
+                      @close="removeAttributeValue(scope.row, index)"
+                      class="e-tag--6px"
+                      v-for="(item, index) in scope.row.attr_vals"
+                      :key="index"
+                      closable
+                      type="success">
+                      {{item}}
+                    </el-tag>
+                  </transition-group>
+                </draggable>
+                {{scope.row.attr_vals}}
+                
                 <!-- 值的输入 -->
                 <el-input
                   class="input-new-tag w120"
@@ -165,7 +193,9 @@ export default {
         attr_name: [{
           required: true, message: '属性名称不得为空', tigger: 'blur'
         }]
-      }
+      },
+      enabled: true,
+      dragging: false
     }
   },
   methods: {
@@ -284,7 +314,7 @@ export default {
       console.log('删除值索引:', index)
 
       row.attr_vals.splice(index, 1) // 删除源数据
-      this.updataAttributeValue(row)
+      this.updataAttributeValue(row, '删除成功')
 
       /*
         删除后数组坍塌怎么办?
@@ -315,10 +345,10 @@ export default {
       row.inputVisible = false
       row.inputValue = '' // 清空
       console.log('添加新的值,', row)
-      this.updataAttributeValue(row)
+      this.updataAttributeValue(row, '数据添加成功')
     },
     // 核心提交原有的数据
-    async updataAttributeValue(row) {
+    async updataAttributeValue(row, msg = '操作成功') {
       const { attr_id, attr_name, attr_sel, cat_id, attr_vals } = row
       const { data: res } = await this.$http.put(`categories/${cat_id}/attributes/${attr_id}`, {
         attr_name,
@@ -328,12 +358,16 @@ export default {
       if (res.meta.status !== 200) {
         return this.$message.error('添加失败:' + res.meta.msg)
       }
-      this.$message.success('添加成功')
+      this.$message.success(msg)
 
       // this.getParams() // 刷新有问题。 不需要从新请求数据。
       console.log('--->添加值成功了吗?', res)
     },
-
+    // 扩展拖拽组件
+    MoveEnd (row) {
+      console.log('拖拽结束')
+      this.updataAttributeValue(row, '重新排序成功')
+    },
 
 
 
