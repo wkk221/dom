@@ -36,7 +36,12 @@ import {
   Tabs,
   TabPane,
   Message,
-  MessageBox
+  MessageBox,
+  Steps,
+  Step,
+  CheckboxGroup,
+  Checkbox
+
 } from 'element-ui'
 
 // 组件式调用
@@ -79,7 +84,10 @@ Vue.use(MenuItemGroup)
 Vue.use(Dialog)
 Vue.use(Cascader) // 级联组件
 Vue.use(Alert)
-
+Vue.use(Steps)
+Vue.use(Step)
+Vue.use(CheckboxGroup)
+Vue.use(Checkbox)
 // API 方式调用
 Vue.prototype.$message = Message
 Vue.prototype.$messageBox = MessageBox

@@ -12,6 +12,8 @@ import './mock/mock' // 导入mock 模拟一些数据
 import ZkTable from 'vue-table-with-tree-grid'
 import Draggable from 'vuedraggable' // 拖拽排序插件
 
+import './filters/filters' // 全局过滤器
+
 Vue.component(ZkTable.name, ZkTable)
 Vue.component('draggable', Draggable)
 
