@@ -17,8 +17,9 @@ module.exports = {
     'keyword-spacing': 0,
     'space-in-parens': 0,
     'no-multiple-empty-lines':0,
-    'camelcase':0,
+    // 'camelcase':0,
     'no-unused-vars':0,
-    'no-trailing-spaces':0
+    'no-trailing-spaces':0,
+    'camelcase': ["error", {"allow": ["aa_bb"]}]
   }
 }

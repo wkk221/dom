@@ -13,7 +13,6 @@
       <el-aside width="200px" class="bg-aside" :class="{'is-open':unfold}">
         <el-menu
           :collapse="unfold"
-          
           unique-opened
           router
           background-color="#333744"

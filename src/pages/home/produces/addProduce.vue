@@ -18,12 +18,12 @@
         <el-step title="完成"></el-step>
       </el-steps>
       <!-- 选项卡 -->
-      <el-form ref="form" 
+      <el-form ref="form"
         :model="addProduceForm" label-width="80px"
         :rules="produceRules" label-position="top"
         class="el-form--compact">
         <el-tabs class="cardTop"
-          v-model="tabActive" tab-position="left" 
+          v-model="tabActive" tab-position="left"
           :before-leave="beforeLeave" @tab-click="tabClicked">
           <el-tab-pane label="基本信息" name="0">
             <el-form-item label="商品名称" prop="goods_name">
@@ -39,8 +39,8 @@
               <el-input v-model="addProduceForm.goods_number"></el-input>
             </el-form-item>
             <el-form-item label="商品分类" prop="goods_cat">
-              <el-cascader 
-              :options="categories" clearable 
+              <el-cascader
+              :options="categories" clearable
               :props="{ expandTrigger: 'hover', label: 'cat_name', value: 'cat_id' }"
               v-model="addProduceForm.goods_cat" @change="handleChange"
             ></el-cascader>
@@ -61,7 +61,6 @@
       </el-form>
       {{addProduceForm}}
     </el-card>
-    
   </div>
 </template>
 <script>
@@ -162,7 +161,7 @@ export default {
       }
       this.attributes = res.data
       this.attributes.forEach((item) => {
-        item.attr_vals = 
+        item.attr_vals =
         item.attr_vals.length === 0
           ? []
           : item.attr_vals.split(' ')
