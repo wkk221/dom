@@ -20,6 +20,8 @@ module.exports = {
     // 'camelcase':0,
     'no-unused-vars':0,
     'no-trailing-spaces':0,
-    'camelcase': ["error", {"allow": ["aa_bb"]}]
+    'camelcase': ["error", {"allow": ["aa_bb"]}],
+    'quotes': 0,
+    'quote-props': 0
   }
 }

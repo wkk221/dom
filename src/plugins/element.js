@@ -40,7 +40,9 @@ import {
   Steps,
   Step,
   CheckboxGroup,
-  Checkbox
+  Checkbox,
+  TimelineItem,
+  Timeline
 
 } from 'element-ui'
 
@@ -88,6 +90,8 @@ Vue.use(Steps)
 Vue.use(Step)
 Vue.use(CheckboxGroup)
 Vue.use(Checkbox)
+Vue.use(TimelineItem)
+Vue.use(Timeline)
 // API 方式调用
 Vue.prototype.$message = Message
 Vue.prototype.$messageBox = MessageBox

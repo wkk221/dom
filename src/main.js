@@ -17,8 +17,8 @@ import './filters/filters' // 全局过滤器
 Vue.component(ZkTable.name, ZkTable)
 Vue.component('draggable', Draggable)
 
-axios.defaults.baseURL = 'http://127.0.0.1:8888/api/private/v1/' // 配置基本的请求路径
-// axios.defaults.baseURL = 'http://127.0.0.1:8888/' // 配置基本的请求路径
+// axios.defaults.baseURL = 'http://127.0.0.1:8888/api/private/v1/' // 配置基本的请求路径
+axios.defaults.baseURL = 'http://timemeetyou.com:8889/api/private/v1/' // 配置基本的请求路径
 axios.interceptors.request.use(config => {
   config.headers.Authorization = window.sessionStorage.getItem('token')
   return config

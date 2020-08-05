@@ -15,6 +15,7 @@ import Params from '../pages/home/produces/params.vue'
 import Good from '../pages/home/produces/good.vue'
 import addProduce from '../pages/home/produces/addProduce.vue'
 import simple from '../pages/home/test/simple.vue'
+import Orders from '../pages/orders/orders.vue'
 
 Vue.use(VueRouter)
 
@@ -42,7 +43,8 @@ const routes = [
       { path: '/params', component: Params }, // 分类参数
       { path: '/goods', component: Good }, // 商品列表
       { path: '/goods/add', component: addProduce }, // 增加商品
-      { path: '/test', component: simple } // 插件测试
+      { path: '/orders', component: Orders }, // 增加商品
+      { path: '/test', component: simple } // 插件测试 orders 
     ]
   },
   {
